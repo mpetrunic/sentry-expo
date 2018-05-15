@@ -4,6 +4,9 @@ const rimraf = require('rimraf');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 const sentryCliBinary = require('@sentry/cli');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 module.exports = async options => {
   let {
@@ -34,12 +37,12 @@ module.exports = async options => {
     fs.writeFileSync(tmpdir + '/main.ios.map', iosSourceMap, 'utf-8');
     fs.writeFileSync(tmpdir + '/main.android.map', androidSourceMap, 'utf-8');
 
-    const childProcessEnv = Object.assign({}, process.env, {
+    const childProcessEnv = Object.assign({}, {
       SENTRY_ORG: config.organization,
       SENTRY_PROJECT: config.project,
       SENTRY_AUTH_TOKEN: config.authToken,
       SENTRY_URL: config.url || 'https://sentry.io/',
-    });
+    }, process.env);
 
     const sentryCliBinaryPath = config.useGlobalSentryCli ?
       'sentry-cli' :
